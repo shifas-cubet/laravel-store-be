@@ -16,6 +16,8 @@ class ProductCategories extends Model
     public $timestamps = false;
 
     public function products() {
-        return $this->belongsToMany(Product::class, 'product_category_pivot');
+        return $this->belongsToMany(Product::class, 'product_category_pivots', 'product_category_id', 'product_id');
     }
+
+
 }

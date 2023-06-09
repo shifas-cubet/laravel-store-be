@@ -29,4 +29,14 @@ class ProductController extends Controller
 
         return response()->json($productsCollection);
     }
+
+    public function details(Request $request, $prodId)
+    {
+        $product = Product::query()
+            ->with(['categories', 'reviews'])
+            ->where('id', '=', $prodId)
+            ->first();
+
+        return response()->success('Product details!', $product);
+    }
 }
