@@ -16,7 +16,7 @@ Route::post('/login', [UserAuthController::class, 'login'])
 Route::get('/auth-check', [UserAuthController::class, 'test'])
     ->middleware('auth:api');
 
-Route::get('list', [\App\Http\Controllers\ProductController::class, 'list']);
+Route::get('products/list', [\App\Http\Controllers\ProductController::class, 'list']);
 
 Route::middleware(['auth:api', \App\Http\Middleware\CompleteRegistrationCheck::class])
     ->prefix('products')
