@@ -1,7 +1,7 @@
 <x-mail::message>
 # Introduction
 
-    Hi {{ $user->name }}
+    Hi {{ $user->email }}
 
 {{--<a href="{{ route('/verify-email', $user->email_verified_token) }}">Verify Email</a>--}}
 

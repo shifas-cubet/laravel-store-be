@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Mail\VerifyEmail;
@@ -14,13 +15,15 @@ use Illuminate\Support\Str;
 
 class UserAuthController extends Controller
 {
-    public function register(RegisterRequest $request) {
-
+    /**
+     * @param SignUpRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function signUp(SignUpRequest $request)
+    {
         $userData = [
-            'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
-            'phone_number' => $request->phone_number,
             'email_verified_token' => Str::random(20)
         ];
 
@@ -33,7 +36,39 @@ class UserAuthController extends Controller
         ]);
     }
 
+    /**
+     * @param RegisterRequest $request
+     */
+    public function completeRegistration(RegisterRequest $request) {
+
+        $user = User::query()->findOrFail(auth()->user()->id);
+
+        $user->complete_registration = 1;
+
+
+//        $userData = [
+//            'name' => $request->name,
+//            'email' => $request->email,
+//            'password' => $request->password,
+//            'phone_number' => $request->phone_number,
+//            'email_verified_token' => Str::random(20)
+//        ];
+//
+//        $user = User::query()->create($userData);
+//
+//        Mail::to($user->email)->send(new VerifyEmail($user));
+//
+//        return response()->json([
+//            'message' => 'Verify Email'
+//        ]);
+    }
+
+    /**
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(LoginRequest $request) {
+
         $user = User::query()
             ->where('email', $request->email)
             ->first();
@@ -57,6 +92,11 @@ class UserAuthController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param $token
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+     */
     public function verifyEmail(Request $request, $token)
     {
         $user = User::query()->where('email_verified_token', $token)->firstOrFail();
@@ -65,9 +105,18 @@ class UserAuthController extends Controller
         $user->email_verified_token = null;
         $user->save();
 
-        return response()->json([
-            'message' => 'Email Verified'
-        ]);
+        return view('email-verified');
+    }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function test()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+           'user' => $user
+        ]);
     }
 }
